@@ -192,9 +192,9 @@ addr mmp_block_reserve(addr const pool, size const block_size_bytes)			//MALLOC
 {
 	if (pool && block_size_bytes)
 	{
-
+		
 	}
-	return 0;
+	return pool;
 }
 
 
