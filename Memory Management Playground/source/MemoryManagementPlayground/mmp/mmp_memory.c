@@ -11,7 +11,7 @@ Copyright 2019-2020
 
 
 //-----------------------------------------------------------------------------
-
+//typedef struct ...
 
 
 //-----------------------------------------------------------------------------
@@ -164,22 +164,26 @@ size mmp_compare(kaddr const block_0, kaddr const block_1, size const size_bytes
 
 //-----------------------------------------------------------------------------
 // pool utilities
-
 addr mmp_pool_init(addr const block_base, size const block_base_size, size const pool_size_bytes)
 {
 	if (block_base && block_base_size && pool_size_bytes)
 	{
-
+		POOL* p = (POOL*)malloc(pool_size_bytes);
+		p->next = (char*)& p[1];
+		p->end = p->next + pool_size_bytes;
+		return p;
 	}
 	return 0;
 }
 
 
-size mmp_pool_term(addr const pool)
+size mmp_pool_term(POOL *pool)
 {
 	if (pool)
 	{
-
+		pool->next = 0;
+		pool->end = 0;
+		return free(pool);
 	}
 	return 0;
 }
@@ -188,24 +192,42 @@ size mmp_pool_term(addr const pool)
 //-----------------------------------------------------------------------------
 // block utilities
 
-addr mmp_block_reserve(addr const pool, size const block_size_bytes)			//MALLOC
+addr mmp_block_reserve(POOL* pool, size const block_size_bytes)
 {
 	if (pool && block_size_bytes)
 	{
+		//first try
 		
-	}
-	return pool;
-}
-
-
-size mmp_block_release(addr const block, addr const pool)						//FREE
-{
-	if (block && pool)
-	{
-
+		if (block_size_bytes >= pool->end && pool->next != 0) 
+		{
+		//Cant allocate more than max size, allocate what you can
+			pool->next = 0;
+			pool->end = block_size_bytes;
+			return pool;
+		}
+		else if(pool->next + block_size_bytes <= pool->end) 
+		{
+			//allocate what memory can be starting at next open byte
+			return mmp_pool_init(pool->next, pool->end, block_size_bytes);
+		}
+		else
+		{
+			//block cannot be reserved from the pool
+			return 0;
+		}
 	}
 	return 0;
 }
 
+
+size mmp_block_release(POOL* block, POOL* pool)
+{
+	if (block && pool)
+	{
+		if(block->end < pool->end && block->next > pool->next)
+			mmp_pool_term(block);
+	}
+	return 0;
+}
 
 //-----------------------------------------------------------------------------
