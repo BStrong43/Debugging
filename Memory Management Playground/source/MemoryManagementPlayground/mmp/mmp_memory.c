@@ -162,6 +162,7 @@ size mmp_compare(kaddr const block_0, kaddr const block_1, size const size_bytes
 }
 
 
+
 //-----------------------------------------------------------------------------
 // pool utilities
 addr mmp_pool_init(addr const block_base, size const block_base_size, size const pool_size_bytes)

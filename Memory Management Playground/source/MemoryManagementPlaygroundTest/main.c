@@ -58,7 +58,7 @@ int testMMP(decl_argc, decl_argv)
 
 #include <stdlib.h>
 
-
+//https://stackoverflow.com/questions/11749386/implement-own-memory-pool
 int testMalloc(decl_argc, decl_argv)
 {
 	//all heap allocation
@@ -89,23 +89,10 @@ int testMalloc(decl_argc, decl_argv)
 	};
 	typedef union malloctest malloctest;
 
-	malloctest* test1024 = malloc(1024);
-	malloctest* test2048 = malloc(2048);
-	malloctest* test4096 = malloc(4096);
-
-
-
-			//start of our block is 1024, but the start of our header is some amount of bytes before it
-
-	//every malloc must have a free
-	free(test1024);
-
-
-	test1024 = malloc(8192);
-
-	free(test4096);
-	free(test1024);
-	free(test2048);
+	void *p = mmp_pool_init(0, 1024, 1024);
+	void* b = mmp_block_reserve(p, 512);
+	mmp_block_release(b, p);
+	mmp_pool_term(p);
 
 	
 	return 0;
