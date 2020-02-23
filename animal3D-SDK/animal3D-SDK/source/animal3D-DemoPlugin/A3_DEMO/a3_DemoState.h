@@ -68,9 +68,9 @@ extern "C"
 
 		demoStateMaxCount_timer = 1,
 		demoStateMaxCount_drawDataBuffer = 1,
-		demoStateMaxCount_vertexArray = 4,
-		demoStateMaxCount_drawable = 8,
-		demoStateMaxCount_shaderProgram = 1,
+		demoStateMaxCount_vertexArray = 8,
+		demoStateMaxCount_drawable = 16,
+		demoStateMaxCount_shaderProgram = 4,
 	};
 
 	// additional counters for demo modes
