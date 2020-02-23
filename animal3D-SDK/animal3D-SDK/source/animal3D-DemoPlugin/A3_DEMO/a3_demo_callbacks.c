@@ -54,7 +54,7 @@ inline a3ui32 a3demo_getPersistentStateSize()
 
 
 // consistent text initialization
-inline void a3demo_initializeText(a3_TextRenderer *text)
+inline void a3demo_initializeText(a3_TextRenderer* text)
 {
 	a3textInitialize(text, 18, 1, 0, 0, 0);//
 }
@@ -188,47 +188,50 @@ A3DYLIBSYMBOL a3_DemoState *a3demoCB_load(a3_DemoState *demoState, a3boolean hot
 
 	// do any initial allocation tasks
 	// HEAP allocate persistent state
-	else if (demoState = (a3_DemoState*)malloc(stateSize))
+	else
 	{
-		// good idea to set the whole block of memory to zero
-		memset(demoState, 0, stateSize);
+		demoState = (a3_DemoState *)malloc(stateSize);
+			if (demoState)
+			{
+				// good idea to set the whole block of memory to zero
+				memset(demoState, 0, stateSize);
 
-		// set up trig table (A3DM)
-		a3trigInit(8, demoState->trigTable);
+				// set up trig table (A3DM)
+				a3trigInit(8, demoState->trigTable);
 
-		// initialize state variables
-		// e.g. timer, thread, etc.
-		a3timerSet(demoState->renderTimer, 30.0);
-		a3timerStart(demoState->renderTimer);
+				// initialize state variables
+				// e.g. timer, thread, etc.
+				a3timerSet(demoState->renderTimer, 30.0);
+				a3timerStart(demoState->renderTimer);
 
-		// text
-		a3demo_initializeText(demoState->text);
-		demoState->textInit = 1;
-		demoState->textMode = 1;
-		demoState->textModeCount = 3;	// 0=off, 1=controls, 2=data
-
-
-		// enable asset streaming between loads
-		demoState->streaming = 1;
-
-
-		// create directory for data
-		a3fileStreamMakeDirectory("./data");
+				// text
+				a3demo_initializeText(demoState->text);
+				demoState->textInit = 1;
+				demoState->textMode = 1;
+				demoState->textModeCount = 1;	// 0=off, 1=controls, 2=data
 
 
-		// set default GL state
-		a3demo_setDefaultGraphicsState();
+				// enable asset streaming between loads
+				demoState->streaming = 1;
 
-		// geometry
-		a3demo_loadGeometry(demoState);
 
-		// shaders
-		a3demo_loadShaders(demoState);
+				// create directory for data
+				a3fileStreamMakeDirectory("./data");
 
-		// scene objects
-		a3demo_initScene(demoState);
+
+				// set default GL state
+				a3demo_setDefaultGraphicsState();
+
+				// geometry
+				a3demo_loadGeometry(demoState);
+
+				// shaders
+				a3demo_loadShaders(demoState);
+
+				// scene objects
+				a3demo_initScene(demoState);
+			}
 	}
-
 	// return persistent state pointer
 	return demoState;
 }
