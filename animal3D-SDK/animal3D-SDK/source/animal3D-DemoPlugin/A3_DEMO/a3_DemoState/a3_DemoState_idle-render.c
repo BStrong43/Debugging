@@ -392,7 +392,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 	// hidden volumes
 	if (demoState->displayHiddenVolumes)
 	{
-
+		
 	}
 
 
